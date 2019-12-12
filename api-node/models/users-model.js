@@ -1,5 +1,6 @@
 const database = require('../configuration/database')
 const collection = 'users'
+const constant = require('./../configuration/constant')
 
 buildProjection = () => {
     let projection = {}
@@ -26,11 +27,26 @@ const user = {
             cmnd: input['cmnd'],
             address: input['address'],
             income: input['income'],
-            money: input['money'],
             mobile: input['mobile']
         }
-        let result = await database.insertOne(collection, document)
-        return result.ops
+        if (input['income']=== 'basic' ) {
+            if(input['money'] > 0 && input['money'] < 500){
+                let result = await database.insertOne(collection, document)
+                return result.ops
+            }   
+        }
+        if (input['income']=== 'gold' ) {
+            if(input['money'] > 0 && input['money'] < 1500){
+                let result = await database.insertOne(collection, document)
+                return result.ops
+            }   
+        }
+        if (input['income']=== 'premium' ) {
+            if(input['money'] > 1500){
+                let result = await database.insertOne(collection, document)
+                return result.ops
+            }   
+        }
     },
     updateUser: async (id, input) => {
         let filter = database.buildFilterById(id)
@@ -38,20 +54,8 @@ const user = {
         if (input['fullname'] !== undefined) {
             document['fullname'] = input['fullname']
         }
-        if (input['email'] !== undefined) {
-            document['email'] = input['email']
-        }
-        if (input['mobile'] !== undefined) {
-            document['mobile'] = input['mobile']
-        }
-        if (input['birthday'] !== undefined) {
-            document['birthday'] = input['birthday']
-        }
         if (input['address'] !== undefined) {
             document['address'] = input['address']
-        }
-        if (input['cmnd'] !== undefined) {
-            document['cmnd'] = input['cmnd']
         }
         if (input['income'] !== undefined) {
             document['income'] = input['income']
@@ -66,6 +70,11 @@ const user = {
         let filter = database.buildFilterById(id)
         let result = await database.deleteLogic(collection, filter)
         return result.modifiedCount
+    },
+    getUserByEmail: async email => {
+        let filter = {}
+        filter[constant.Collections.Common.Email] = email
+        return await database.findOne(collection, filter)
     }
 }
 

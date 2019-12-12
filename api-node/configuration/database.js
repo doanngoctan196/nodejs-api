@@ -11,7 +11,7 @@ const dbName = 'inforUsers'
 buildUpdateFromInput = input => {
     let update = {}
     if (input) {
-        input[Constants.Collections.Common.UpdateTime] = new Date().getTime() / 1000
+        input[Constants.Collections.Common.UpdateTime] = new Date().getTime()
         update[Constants.DbKeywords.Set] = input
     }
     return update
@@ -54,6 +54,7 @@ const database = {
     },
     /** This function is used to insert one document. */
     insertOne: async (collectionName, data) => {
+        data[Constants.Collections.Common.InsertTime] = new Date().getTime()
         return await database.db.collection(collectionName).insertOne(data)
     },
     /** This function is used to insert multiple documents. */

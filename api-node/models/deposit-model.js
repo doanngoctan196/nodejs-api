@@ -23,8 +23,33 @@ const depositModel = {
             email: input['email'],
             statuss: input['statuss'],
             deposit: input['deposit'],
-            insertTime: new Date().getTime() / 1000
         }
+        let timeStart = new Date().setHours(0, 0, 0) / 1000
+
+        let timeEnd = new Date().setHours(23, 59, 59) / 1000
+        let today = new Date().getTime() / 1000
+
+            if (today >= timeStart && today <= timeEnd) {
+                database.db
+                    .collection('deposits')
+                    .countDocuments(
+                        { insertTime: { $gt: timeStart, $lt: timeEnd }, email: input['email'] },
+                        async function(err, count) {
+                            let counts = count
+                            if (input['statuss'] === 'basic' && input['deposit'] >= 0 && input['deposit'] <= 500) {
+                                if (counts < 3) {
+                                    document['deposit'] = input['deposit']
+                                }
+                            }if (input['statuss'] === 'gold' && input['deposit'] >= 0 && input['deposit'] <= 1500) {
+                                if (counts < 5) {
+                                    document['deposit'] = input['deposit']
+                                }
+                            }if (input['statuss'] === 'premium') {
+                                document['deposit'] = input['deposit']
+                            }
+                        }
+                    )
+            }
         let result = await database.insertOne(collection, document)
         return result.ops
     }

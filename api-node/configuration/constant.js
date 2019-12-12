@@ -4,7 +4,10 @@ const Constants = Object.freeze({
     Deleted: 1,
     /** This field indicates that item was modified in database. */
     ModifiedSuccess: 1,
-
+    Response: Object.freeze({
+        Success: 0,
+        Failure: 9,
+    }),
     DbKeywords: Object.freeze({
         NotEqual: '$ne',
         Set: '$set'
@@ -13,6 +16,8 @@ const Constants = Object.freeze({
         // Common fields
         Common: Object.freeze({
             _ID: '_id',
+            Email : 'email',
+            Mobile : 'mobile',
             DeleteFlag: 'deleteFlag',
             UpdateTime: 'updateTime',
             DeleteTime: 'deleteTime',
