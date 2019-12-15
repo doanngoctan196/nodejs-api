@@ -10,6 +10,7 @@ const Constants = Object.freeze({
     }),
     DbKeywords: Object.freeze({
         NotEqual: '$ne',
+        Equal : 'qe',
         Set: '$set'
     }),
     Collections: Object.freeze({

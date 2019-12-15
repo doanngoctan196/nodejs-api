@@ -94,6 +94,9 @@ const database = {
         filter[Constants.Collections.Common._ID] = ObjectId(id)
         filter[Constants.Collections.Common.DeleteFlag] = notEqual
         return filter
+    },
+    countDocuments : async(collectionName,filter,options) => {
+        return await database.db.collection(collectionName).countDocuments(filter,options)
     }
 }
 module.exports = database

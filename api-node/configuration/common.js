@@ -22,7 +22,7 @@ const common = {
         if (result) {
             return utils.successResponse(result, res)
         } else {
-            return utils.badRequestResponse('params invalid', res)
+            return utils.badRequestResponse('add failure', res)
         }
     },
     findDataResponse: (result, res) => {

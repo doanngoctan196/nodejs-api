@@ -1,7 +1,6 @@
 const database = require('../configuration/database')
 const collection = 'users'
-const constant = require('./../configuration/constant')
-
+const Constants = require('../configuration/constant')
 buildProjection = () => {
     let projection = {}
     return projection
@@ -27,25 +26,27 @@ const user = {
             cmnd: input['cmnd'],
             address: input['address'],
             income: input['income'],
+            money: input['money'],
             mobile: input['mobile']
         }
-        if (input['income']=== 'basic' ) {
-            if(input['money'] > 0 && input['money'] < 500){
+
+        if (input['income'] === 'basic') {
+            if (input['money'] > 0 && input['money'] < 500) {
                 let result = await database.insertOne(collection, document)
                 return result.ops
-            }   
+            }
         }
-        if (input['income']=== 'gold' ) {
-            if(input['money'] > 0 && input['money'] < 1500){
+        if (input['income'] === 'gold') {
+            if (input['money'] > 0 && input['money'] < 1500) {
                 let result = await database.insertOne(collection, document)
                 return result.ops
-            }   
+            }
         }
-        if (input['income']=== 'premium' ) {
-            if(input['money'] > 1500){
+        if (input['income'] === 'premium') {
+            if (input['money'] > 1500) {
                 let result = await database.insertOne(collection, document)
                 return result.ops
-            }   
+            }
         }
     },
     updateUser: async (id, input) => {
@@ -54,15 +55,13 @@ const user = {
         if (input['fullname'] !== undefined) {
             document['fullname'] = input['fullname']
         }
+        if (input['birthday'] !== undefined) {
+            document['birthday'] = input['birthday']
+        }
         if (input['address'] !== undefined) {
             document['address'] = input['address']
         }
-        if (input['income'] !== undefined) {
-            document['income'] = input['income']
-        }
-        if (input['money'] !== undefined) {
-            document['money'] = input['money']
-        }
+
         let result = await database.updateOne(collection, filter, document)
         return result.modifiedCount
     },
@@ -73,7 +72,12 @@ const user = {
     },
     getUserByEmail: async email => {
         let filter = {}
-        filter[constant.Collections.Common.Email] = email
+        filter[Constants.Collections.Common.Email] = email
+        return await database.findOne(collection, filter)
+    },
+    getMobileUser: async mobile => {
+        let filter = {}
+        filter[Constants.Collections.Common.Mobile] = mobile
         return await database.findOne(collection, filter)
     }
 }

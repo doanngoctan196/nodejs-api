@@ -1,6 +1,7 @@
 const database = require('../configuration/database')
 const collection = 'deposits'
-
+const utils = require('./../configuration/utils')
+const constant = require('./../configuration/constant')
 buildProjection = () => {
     let projection = {}
     return projection
@@ -18,40 +19,28 @@ const depositModel = {
         return await database.findOne(collection, filter, options)
     },
     addDeposits: async input => {
+        let timeStart = new Date().setHours(0, 0, 0)
+        let timeEnd = new Date().setHours(23, 59, 59)
         let document = {
             fullname: input['fullname'],
             email: input['email'],
             statuss: input['statuss'],
-            deposit: input['deposit'],
+            deposit: input['deposit']
         }
-        let timeStart = new Date().setHours(0, 0, 0) / 1000
+    let count = await database.db.collection(collection).countDocuments({insertTime : {$gt : timeStart , $lt : timeEnd}, email : input['email']})
+        if (input['statuss'] === 'basic' && input['deposit'] > 0 && input['deposit'] < 500 && count < 3) {
+                let result = await database.insertOne(collection, document)
+                return result.ops
+          }
+        if (input['statuss'] === 'gold' && input['deposit'] > 0 && input['deposit'] < 1500 && count < 5) {
+                let result = await database.insertOne(collection, document)
+                return result.ops
+          }
+        if (input['statuss'] === 'premium') {
+                let result = await database.insertOne(collection, document)
+                return result.ops
+          }
+    },
 
-        let timeEnd = new Date().setHours(23, 59, 59) / 1000
-        let today = new Date().getTime() / 1000
-
-            if (today >= timeStart && today <= timeEnd) {
-                database.db
-                    .collection('deposits')
-                    .countDocuments(
-                        { insertTime: { $gt: timeStart, $lt: timeEnd }, email: input['email'] },
-                        async function(err, count) {
-                            let counts = count
-                            if (input['statuss'] === 'basic' && input['deposit'] >= 0 && input['deposit'] <= 500) {
-                                if (counts < 3) {
-                                    document['deposit'] = input['deposit']
-                                }
-                            }if (input['statuss'] === 'gold' && input['deposit'] >= 0 && input['deposit'] <= 1500) {
-                                if (counts < 5) {
-                                    document['deposit'] = input['deposit']
-                                }
-                            }if (input['statuss'] === 'premium') {
-                                document['deposit'] = input['deposit']
-                            }
-                        }
-                    )
-            }
-        let result = await database.insertOne(collection, document)
-        return result.ops
-    }
 }
 module.exports = depositModel
